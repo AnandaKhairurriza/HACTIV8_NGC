@@ -1,0 +1,66 @@
+/*C.1 Group By*/
+Case 1 : Who is the teacher with the highest salary for each university ?
+
+MIT			Lee Reynolds		65000
+Cambridge University	Samuel Cole		43500
+Cambridge University	Betty Diaz		43500
+Harvard University	James Diaz		61000
+Standford University	Frank Abbers		66000
+
+#SOURCE CODE
+SELECT t.school, t.first_name, t.last_name, t.salary FROM teachers t
+JOIN (SELECT school, MAX(salary) AS highSalary FROM teachers GROUP BY school) 
+temp ON (t.school = temp.school AND t.salary = temp.highSalary);
+
+Case 2 : Who is the teacher with the highest salary FROM Standford University ?
+
+Frank Abbers	Standford University	66000
+
+#SOURCE CODE
+SELECT t.first_name, t.last_name, t.school, t.salary FROM teachers t
+JOIN (SELECT school, MAX(salary) AS maxs FROM teachers GROUP BY school) 
+temp ON (t.school = temp.school AND t.salary = temp.maxs) WHERE t.school="Standford University";
+
+/*C.1 Join*/
+
+Case 1 : Display all courses with teacher's identity
+
+#SOURCE CODE
+SELECT c.name, t.first_name, t.last_name, t.school, t.hire_date FROM teachers t JOIN courses c
+ON t.id = c.teachers_id ORDER BY c.name asc;
+
+Case 2 : Display how many courses per universities
+
+#SOURCE CODE
+SELECT count(DISTINCT (c.name)) as totalCourses, t.school FROM teachers t JOIN courses c
+ON t.id = c.teachers_id
+GROUP BY t.school
+ORDER BY t.school ASC;
+
+Case 3 : Display how many total_students per teachers
+
+#SOURCE CODE
+SELECT t.first_name, t.last_name, SUM(total_students) AS totalStudents FROM courses c 
+JOIN teachers t ON c.teachers_id = t.id
+GROUP BY c.teachers_id
+ORDER BY totalStudents ASC;
+
+Case 4 : Display how many courses per teachers
+
+#SOURCE CODE
+SELECT t.first_name, t.last_name, COUNT(c.id) AS totalCourses FROM courses c 
+JOIN teachers t ON c.teachers_id = t.id
+GROUP BY c.teachers_id
+ORDER BY totalCourses ASC;
+
+Soal : 
+Carilah dosen yang memiliki gaji tertinggi per masing-masing mata kuliah. 
+Tampilkan  semua atribut dosen dan semua atribut mata kuliahnya. 
+Urutkan hasilnya berdasarkan nama  mata kuliahnya secara ascending(A-Z).
+
+#SOURCE CODE
+SELECT t.id, t.first_name, t.last_name, t.school, t.salary, c.name, c.teachers_id, c.total_students FROM teachers t
+JOIN courses c on t.id = c.teachers_id
+JOIN (SELECT c.name, MAX(t.salary) AS highSalary FROM teachers t JOIN courses c ON t.id = c.teachers_id GROUP BY c.name) 
+temp ON (c.name = temp.name AND t.salary = temp.highSalary)
+order by c.name ASC;
